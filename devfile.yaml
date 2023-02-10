@@ -25,7 +25,6 @@ components:
           path: /home/user/.m2
       memoryLimit: 6G
       mountSources: true
-
   - name: ubi-minimal
     container:
       image: registry.access.redhat.com/ubi8/ubi-minimal
@@ -33,7 +32,9 @@ components:
       args: ['-f', '/dev/null']
       memoryLimit: 64M
       mountSources: true
-
+  - name: m2
+    volume:
+      size: 1G
 commands:
   - id: package
     exec:
