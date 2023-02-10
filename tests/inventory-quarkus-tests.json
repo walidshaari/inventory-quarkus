@@ -18,7 +18,7 @@
 							"",
 							"pm.test(\"Data is correct\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.id).to.eql(1);",
+							"    pm.expect(jsonData.id).to.eql(100000);",
 							"    pm.expect(jsonData.quantity).to.eql(0);",
 							"});"
 						],
