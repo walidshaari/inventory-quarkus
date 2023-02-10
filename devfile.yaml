@@ -1,6 +1,6 @@
 schemaVersion: 2.1.0
 metadata:
-  generateName: inventory-quarkus-
+  generateName: inventory-quarkus
 attributes:
   controller.devfile.io/storage-type: ephemeral
 components:
@@ -19,12 +19,13 @@ components:
           name: inventory
           protocol: http
           targetPort: 8080
-          path: /api/inventory
+          path: /
       volumeMounts:
         - name: m2
           path: /home/user/.m2
       memoryLimit: 6G
       mountSources: true
+
   - name: ubi-minimal
     container:
       image: registry.access.redhat.com/ubi8/ubi-minimal
@@ -32,6 +33,7 @@ components:
       args: ['-f', '/dev/null']
       memoryLimit: 64M
       mountSources: true
+
 commands:
   - id: package
     exec:
@@ -72,6 +74,6 @@ commands:
       label: "Tag Image"
       component: tools
       workingDir: ${PROJECTS_ROOT}/inventory-quarkus
-      commandLine: "podman tag localhost/quarkus/getting-started-jvm:latest quay.io/coolstore-demo/inventory-quarkus:latest"
+      commandLine: "podman tag quay.io/coolstore-demo/inventory-quarkus:latest"
       group:
         kind: test
