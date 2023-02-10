@@ -1,0 +1,75 @@
+schemaVersion: 2.1.0
+metadata:
+  generateName: inventory-quarkus-
+components:
+  - name: tools
+    container:
+      image: quay.io/devfile/universal-developer-image:ubi8-latest
+      env:
+        - name: QUARKUS_HTTP_HOST
+          value: 0.0.0.0
+      endpoints:
+        - exposure: none
+          name: debug
+          protocol: tcp
+          targetPort: 5005
+        - exposure: public
+          name: test service
+          protocol: http
+          targetPort: 8080
+          path: /api/inventory
+      volumeMounts:
+        - name: m2
+          path: /home/user/.m2
+      memoryLimit: 6G
+      mountSources: true
+  - name: ubi-minimal
+    container:
+      image: registry.access.redhat.com/ubi8/ubi-minimal
+      command: ['tail']
+      args: ['-f', '/dev/null']
+      memoryLimit: 64M
+      mountSources: true
+commands:
+  - id: package
+    exec:
+      label: "Package"
+      component: tools
+      workingDir: ${PROJECTS_ROOT}/inventory-quarkus
+      commandLine: "./mvnw clean package -DskipTests=true"
+      group:
+        kind: build
+        isDefault: true
+  - id: runtests
+    exec:
+      label: "Run Tests"
+      component: tools
+      workingDir: ${PROJECTS_ROOT}/inventory-quarkus
+      commandLine: "./mvnw test"
+      group:
+        kind: test
+  - id: startdev
+    exec:
+      label: "Start Development mode (Hot reload + debug)"
+      component: tools
+      workingDir: ${PROJECTS_ROOT}/inventory-quarkus
+      commandLine: "./mvnw compile quarkus:dev"
+      group:
+        kind: run
+        isDefault: true
+  - id: buildimage
+    exec:
+      label: "Build Image"
+      component: tools
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: "podman build -f src/main/docker/Dockerfile.jvm -t quay.io/che-incubator/inventory-quarkus ."
+      group:
+        kind: build
+  - id: tag
+    exec:
+      label: "Tag Image"
+      component: tools
+      workingDir: ${PROJECTS_ROOT}/inventory-quarkus
+      commandLine: "podman tag localhost/quarkus/getting-started-jvm:latest quay.io/coolstore-demo/inventory-quarkus:latest"
+      group:
+        kind: test
