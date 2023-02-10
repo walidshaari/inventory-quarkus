@@ -7,6 +7,7 @@
       "vscjava.vscode-java-test",
       "redhat.vscode-quarkus",
       "redhat.vscode-yaml",
-      "redhat.vscode-openshift-connector"
+      "redhat.vscode-openshift-connector",
+      "redhat.fabric8-analytics"
     ]
 }
