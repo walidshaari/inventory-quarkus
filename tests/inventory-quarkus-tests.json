@@ -18,8 +18,8 @@
 							"",
 							"pm.test(\"Data is correct\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.id).to.eql(100000);",
-							"    pm.expect(jsonData.quantity).to.eql(0);",
+							"    pm.expect(jsonData.id).to.eql(329299);",
+							"    pm.expect(jsonData.quantity).to.eql(35);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -30,7 +30,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{scheme}}://{{host}}/api/inventory/100000",
+					"raw": "{{scheme}}://{{host}}/api/inventory/329299",
 					"protocol": "{{scheme}}",
 					"host": [
 						"{{host}}"
@@ -38,7 +38,7 @@
 					"path": [
 						"api",
 						"inventory",
-						"100000"
+						"329299"
 					]
 				}
 			},
