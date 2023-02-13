@@ -28,4 +28,16 @@ public class InventoryResourceTest {
              .body(is("{\"id\":100000,\"quantity\":0}"));
     }
 
+    @Test
+    public void testUpdateFedoraQty() {
+        given()
+          .header("Content-type", "application/json")
+          .and()
+          .body("{\"quantity\": \"1\"}")
+          .when().put("/api/inventory/100000/")
+            .then()
+              .statusCode(200)
+              .body(is("{\"id\":100000,\"quantity\":1}"));
+    }
+
 }
