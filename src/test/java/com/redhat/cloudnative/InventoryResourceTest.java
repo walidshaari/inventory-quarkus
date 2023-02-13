@@ -10,12 +10,22 @@ import static org.hamcrest.CoreMatchers.is;
 public class InventoryResourceTest {
 
     @Test
-    public void testHelloEndpoint() {
+    public void testQuarkusTshirtQty() {
         given()
           .when().get("/api/inventory/329299")
           .then()
              .statusCode(200)
              .body(is("{\"id\":329299,\"quantity\":35}"));
+    }
+
+
+    @Test
+    public void testFedoraQty() {
+        given()
+          .when().get("/api/inventory/100000")
+          .then()
+             .statusCode(200)
+             .body(is("{\"id\":100000,\"quantity\":0}"));
     }
 
 }
