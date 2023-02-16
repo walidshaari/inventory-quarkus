@@ -18,7 +18,6 @@ public class InventoryResourceTest {
              .body(is("{\"id\":329299,\"quantity\":35}"));
     }
 
-
     @Test
     public void testFedoraQty() {
         given()
@@ -38,6 +37,17 @@ public class InventoryResourceTest {
             .then()
               .statusCode(200)
               .body(is("{\"id\":100000,\"quantity\":1}"));
+    }
+
+    @Test
+    public void testUpdateFedoraQtyNoItem() {
+        given()
+          .header("Content-type", "application/json")
+          .and()
+          .body("{\"quantity\": \"1\"}")
+          .when().put("/api/inventory/100001/")
+            .then()
+              .statusCode(404);
     }
 
 }
