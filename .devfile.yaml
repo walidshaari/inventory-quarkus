@@ -1,4 +1,4 @@
-schemaVersion: 2.1.0
+schemaVersion: 2.2.0
 metadata:
   name: inventory-quarkus
 attributes:
@@ -15,30 +15,23 @@ components:
           name: debug
           protocol: tcp
           targetPort: 5005
+        - exposure: none
+          name: test
+          protocol: http
+          targetPort: 8081
         - exposure: public
           name: inventory
           protocol: http
           targetPort: 8080
           path: /
-      volumeMounts:
-        - name: m2
-          path: /home/user/.m2
+      memoryRequest: 5Mi
       memoryLimit: 6G
-      mountSources: true
-  - name: ubi-minimal
-    container:
-      image: registry.access.redhat.com/ubi8/ubi-minimal
-      command: ['tail']
-      args: ['-f', '/dev/null']
-      memoryLimit: 64M
-      mountSources: true
-  - name: m2
-    volume:
-      size: 1G
+      cpuRequest: 1000m
+      cpuLimit: 4000m
 commands:
   - id: package
     exec:
-      label: "Package"
+      label: "1. Package"
       component: tools
       workingDir: ${PROJECTS_ROOT}/inventory-quarkus
       commandLine: "./mvnw clean package -DskipTests=true"
@@ -47,7 +40,7 @@ commands:
         isDefault: true
   - id: runtests
     exec:
-      label: "Run Tests"
+      label: "2. Run Tests"
       component: tools
       workingDir: ${PROJECTS_ROOT}/inventory-quarkus
       commandLine: "./mvnw test"
@@ -55,7 +48,7 @@ commands:
         kind: test
   - id: startdev
     exec:
-      label: "Start Development mode (Hot reload + debug)"
+      label: "3. Start Development mode (Hot reload + debug)"
       component: tools
       workingDir: ${PROJECTS_ROOT}/inventory-quarkus
       commandLine: "./mvnw compile quarkus:dev"
@@ -64,17 +57,25 @@ commands:
         isDefault: true
   - id: buildimage
     exec:
-      label: "Build Image"
+      label: "4. Build Image"
       component: tools
       workingDir: ${PROJECT_SOURCE}
-      commandLine: "podman build -f src/main/docker/Dockerfile.jvm -t quay.io/che-incubator/inventory-quarkus ."
+      commandLine: |
+        IMAGE=image-registry.openshift-image-registry.svc:5000/openshift/quarkus-api-example
+        podman build -f src/main/docker/Dockerfile.jvm -t "${IMAGE}" .
       group:
         kind: build
-  - id: tag
+  - id: pushimage
     exec:
-      label: "Tag Image"
+      label: "5. Push Image"
       component: tools
-      workingDir: ${PROJECTS_ROOT}/inventory-quarkus
-      commandLine: "podman tag quay.io/coolstore-demo/inventory-quarkus:latest"
+      commandLine: |
+        # Requires `oc policy add-role-to-user registry-editor <user_name> -n openshift`
+        IMAGE=image-registry.openshift-image-registry.svc:5000/openshift/quarkus-api-example
+        podman login --tls-verify=false -u $(oc whoami) -p $(oc whoami -t) image-registry.openshift-image-registry.svc:5000
+        podman push --tls-verify=false "${IMAGE}"
       group:
-        kind: test
+        kind: build
+events:
+  postStart:
+    - package
