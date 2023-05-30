@@ -3,7 +3,7 @@ CoolStore Inventory Service with Quarkus.
 
 REST API service written in Quarkus.
 
-Great service.
+Great service, really awesome.
 
 # Start VSCode with OpenShift DevSpaces
 
