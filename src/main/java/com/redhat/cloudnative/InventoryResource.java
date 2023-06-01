@@ -15,7 +15,6 @@ import javax.ws.rs.core.MediaType;
 @ApplicationScoped
 public class InventoryResource {
 
-
     @GET
     @Path("/{itemId}")
     @Produces(MediaType.APPLICATION_JSON)
